@@ -1,0 +1,106 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int           @id @default(autoincrement())
+  email          String        @unique
+  name           String
+  organisationId Int?          @map("organisation_id")
+  organisation   Organisation? @relation(fields: [organisationId], references: [id])
+  bookings       Booking[]
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+
+  @@map("user")
+}
+
+model Organisation {
+  id              Int               @id @default(autoincrement())
+  name            String
+  users           User[]
+  spaces          Space[]
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  Unuavailability Unuavailability[]
+
+  @@map("organisation")
+}
+
+model Space {
+  id              Int               @id @default(autoincrement())
+  name            String
+  organisationId  Int?              @map("organisation_id")
+  organisation    Organisation?     @relation(fields: [organisationId], references: [id])
+  slots           Slot[]
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  deletedAt       DateTime?         @map("deleted_at")
+  Unuavailability Unuavailability[]
+
+  @@map("space")
+}
+
+model Slot {
+  id           Int           @id @default(autoincrement())
+  name         String
+  startTime    Int           @map("start_time") // minute of the day that the slot starts
+  endTime      Int           @map("end_time") // minute of the day that the slot ends
+  daysOfWeek   Int[]         @map("days_of_week") // 0 = Sunday, 1 = Monday, 2 = Tuesday, 3 = Wednesday, 4 = Thursday, 5 = Friday, 6 = Saturday
+  daysOfMonth  Int[]         @map("days_of_month") // 1 = 1st of the month, 2 = 2nd of the month, -1 = last day of the month, etc...
+  spaceId      Int           @map("space_id")
+  blockSize    Int           @default(30) @map("block_size") // bookings must be made in multiples of blockSize minutes
+  space        Space         @relation(fields: [spaceId], references: [id])
+  bookingSlots BookingSlot[]
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  deletedAt    DateTime?     @map("deleted_at")
+
+  @@map("slot")
+}
+
+model Unuavailability {
+  id             Int           @id @default(autoincrement())
+  spaceId        Int?          @map("space_id")
+  space          Space?        @relation(fields: [spaceId], references: [id])
+  organisationId Int?          @map("organisation_id")
+  organisation   Organisation? @relation(fields: [organisationId], references: [id])
+  startTime      DateTime      @map("start_time")
+  endTime        DateTime      @map("end_time")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+
+  @@map("unuavailability")
+}
+
+model BookingSlot {
+  bookingId Int      @map("booking_id")
+  slotId    Int      @map("slot_id")
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  slot      Slot     @relation(fields: [slotId], references: [id])
+  startTime DateTime @map("start_time")
+  endTime   DateTime @map("end_time")
+
+  @@id([bookingId, slotId])
+  @@map("booking_slot")
+}
+
+model Booking {
+  id           Int           @id @default(autoincrement())
+  userId       Int           @map("user_id")
+  User         User          @relation(fields: [userId], references: [id])
+  bookingSlots BookingSlot[]
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+
+  @@map("booking")
+}
