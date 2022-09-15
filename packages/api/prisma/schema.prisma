@@ -11,96 +11,215 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  action    String
+  table     String
+  recordId  Int      @map("record_id")
+  data      Json
+  userId    Int      @map("user_id")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("audit_log")
+}
+
 model User {
-  id             Int           @id @default(autoincrement())
-  email          String        @unique
-  name           String
-  organisationId Int?          @map("organisation_id")
-  organisation   Organisation? @relation(fields: [organisationId], references: [id])
-  bookings       Booking[]
-  createdAt      DateTime      @default(now()) @map("created_at")
-  updatedAt      DateTime      @updatedAt @map("updated_at")
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  name         String
+  customFields Json?    @map("custom_fields")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  bookings          Booking[]
+  organisationUsers OrganisationUser[]
+  auditLogs         AuditLog[]
 
   @@map("user")
 }
 
+model OrganisationUser {
+  id             Int      @id @default(autoincrement())
+  organisationId Int      @map("organisation_id")
+  userId         Int      @map("user_id")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  organisation Organisation @relation(fields: [organisationId], references: [id])
+  user         User         @relation(fields: [userId], references: [id])
+
+  @@map("organisation_user")
+}
+
 model Organisation {
-  id              Int               @id @default(autoincrement())
-  name            String
-  users           User[]
-  spaces          Space[]
-  createdAt       DateTime          @default(now()) @map("created_at")
-  updatedAt       DateTime          @updatedAt @map("updated_at")
-  Unuavailability Unuavailability[]
+  id           Int      @id @default(autoincrement())
+  name         String
+  customfields Json?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  spaces           Space[]
+  unavailables     Unuavailable[]
+  options          Option[]
+  coupons          Coupon[]
+  OrganisationUser OrganisationUser[]
 
   @@map("organisation")
 }
 
 model Space {
-  id              Int               @id @default(autoincrement())
-  name            String
-  organisationId  Int?              @map("organisation_id")
-  organisation    Organisation?     @relation(fields: [organisationId], references: [id])
-  slots           Slot[]
-  createdAt       DateTime          @default(now()) @map("created_at")
-  updatedAt       DateTime          @updatedAt @map("updated_at")
-  deletedAt       DateTime?         @map("deleted_at")
-  Unuavailability Unuavailability[]
+  id             Int       @id @default(autoincrement())
+  name           String
+  customFields   Json?     @map("custom_fields")
+  organisationId Int       @map("organisation_id")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+
+  organisation Organisation   @relation(fields: [organisationId], references: [id])
+  slots        Slot[]
+  unavailables Unuavailable[]
+  options      Option[]
+  coupons      Coupon[]
 
   @@map("space")
 }
 
 model Slot {
-  id           Int           @id @default(autoincrement())
+  id           Int       @id @default(autoincrement())
   name         String
-  startTime    Int           @map("start_time") // minute of the day that the slot starts
-  endTime      Int           @map("end_time") // minute of the day that the slot ends
-  daysOfWeek   Int[]         @map("days_of_week") // 0 = Sunday, 1 = Monday, 2 = Tuesday, 3 = Wednesday, 4 = Thursday, 5 = Friday, 6 = Saturday
-  daysOfMonth  Int[]         @map("days_of_month") // 1 = 1st of the month, 2 = 2nd of the month, -1 = last day of the month, etc...
-  spaceId      Int           @map("space_id")
-  blockSize    Int           @default(30) @map("block_size") // bookings must be made in multiples of blockSize minutes
+  startTime    Int       @map("start_time") // minute of the day that the slot starts
+  length       Int // length, in minutes, of the slot
+  daysOfWeek   Int[]     @map("days_of_week") // 0 = Sunday, 1 = Monday, 2 = Tuesday, 3 = Wednesday, 4 = Thursday, 5 = Friday, 6 = Saturday
+  daysOfMonth  Int[]     @map("days_of_month") // 1 = 1st of the month, 2 = 2nd of the month, -1 = last day of the month, etc...
+  spaceId      Int       @map("space_id")
+  blockLength  Int       @default(30) @map("block_length") // bookings must be made in multiples of blockLength minutes
+  blockPrice   Int       @default(0) @map("block_price") // price of a single block
+  customFields Json?     @map("custom_fields")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+
   space        Space         @relation(fields: [spaceId], references: [id])
   bookingSlots BookingSlot[]
-  createdAt    DateTime      @default(now()) @map("created_at")
-  updatedAt    DateTime      @updatedAt @map("updated_at")
-  deletedAt    DateTime?     @map("deleted_at")
+  options      Option[]
+  coupons      Coupon[]
 
   @@map("slot")
 }
 
-model Unuavailability {
-  id             Int           @id @default(autoincrement())
-  spaceId        Int?          @map("space_id")
-  space          Space?        @relation(fields: [spaceId], references: [id])
-  organisationId Int?          @map("organisation_id")
-  organisation   Organisation? @relation(fields: [organisationId], references: [id])
-  startTime      DateTime      @map("start_time")
-  endTime        DateTime      @map("end_time")
-  createdAt      DateTime      @default(now()) @map("created_at")
-  updatedAt      DateTime      @updatedAt @map("updated_at")
+model Unuavailable {
+  id             Int      @id @default(autoincrement())
+  reason         String
+  organisationId Int      @map("organisation_id")
+  spaceId        Int?     @map("space_id") // if set, the unavailability is only applied the specified space
+  startTime      DateTime @map("start_time")
+  endTime        DateTime @map("end_time")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
 
-  @@map("unuavailability")
+  organisation Organisation @relation(fields: [organisationId], references: [id])
+  space        Space?       @relation(fields: [spaceId], references: [id])
+
+  @@map("unuavailable")
+}
+
+model Option {
+  id             Int       @id @default(autoincrement())
+  name           String
+  unitPrice      Int       @map("unit_price")
+  maxUnits       Int       @default(1) @map("max_units") // the maximum number of units that can be added to a booking
+  organisationId Int       @map("organisation_id")
+  spaceId        Int?      @map("space_id") // if set, the option is only available for the specified space
+  slotId         Int?      @map("slot_id") // if set, the option is only available for the specified slot
+  customFields   Json?     @map("custom_fields")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+
+  organisation  Organisation    @relation(fields: [organisationId], references: [id])
+  space         Space?          @relation(fields: [spaceId], references: [id])
+  slot          Slot?           @relation(fields: [slotId], references: [id])
+  BookingOption BookingOption[]
+
+  @@map("option")
 }
 
 model BookingSlot {
-  bookingId Int      @map("booking_id")
-  slotId    Int      @map("slot_id")
-  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  slot      Slot     @relation(fields: [slotId], references: [id])
-  startTime DateTime @map("start_time")
-  endTime   DateTime @map("end_time")
+  bookingId         Int      @map("booking_id")
+  slotId            Int      @map("slot_id")
+  startTime         DateTime @map("start_time")
+  endTime           DateTime @map("end_time")
+  slotBlockPrice    Int      @map("block_price") // copy of the slot block price at the time of booking, in case the slot block price changes
+  slotBlockQuantity Int      @map("block_quantity") // calulated from the booking time span and the slot block length - makes it easier to calculate the booking price
+  slotSnapshot      Json     @map("slot_snapshot") // copy of the slot at the time of booking, in case the slot changes
+  customFields      Json?    @map("custom_fields")
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  slot    Slot    @relation(fields: [slotId], references: [id])
 
   @@id([bookingId, slotId])
   @@map("booking_slot")
 }
 
+model BookingOption {
+  bookingId      Int   @map("booking_id")
+  optionId       Int   @map("option_id")
+  quantity       Int   @default(1)
+  unitPrice      Int   @map("unit_price") // copied from the option at the time of booking, in case the option price changes
+  optionSnapshot Json  @map("option_snapshot") // copied from the option at the time of booking, in case the option changes
+  customFields   Json? @map("custom_fields")
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  option  Option  @relation(fields: [optionId], references: [id])
+
+  @@id([bookingId, optionId])
+  @@map("booking_option")
+}
+
 model Booking {
-  id           Int           @id @default(autoincrement())
-  userId       Int           @map("user_id")
-  User         User          @relation(fields: [userId], references: [id])
-  bookingSlots BookingSlot[]
-  createdAt    DateTime      @default(now()) @map("created_at")
-  updatedAt    DateTime      @updatedAt @map("updated_at")
+  id                       Int      @id @default(autoincrement())
+  userId                   Int      @map("user_id")
+  couponId                 Int?     @map("coupon_id")
+  couponDiscountPercentage Int?     @map("discount_percentage") // if a coupon is used, copied from the coupon when the booking is created, in case the coupon discount changes
+  couponDiscountValue      Int?     @map("discount_value") // if a coupon is used, copied from the coupon when the booking is created, in case the coupon discount changes
+  couponSnapshot           Json?    @map("coupon_snapshot") // if a coupon is used, copied from the coupon when the booking is created, in case the coupon changes
+  customFields             Json?    @map("custom_fields")
+  createdAt                DateTime @default(now()) @map("created_at")
+  updatedAt                DateTime @updatedAt @map("updated_at")
+
+  user          User            @relation(fields: [userId], references: [id])
+  coupon        Coupon?         @relation(fields: [couponId], references: [id])
+  bookingSlots  BookingSlot[]
+  bookingOption BookingOption[]
 
   @@map("booking")
+}
+
+model Coupon {
+  id                 Int       @id @default(autoincrement())
+  code               String //  coupun codes, not marked as deleted, must be unique to the organisation
+  discountPercentage Int?      @map("discount_percentage") // either discountPercentage or discountValue must have a value, but not both
+  discountValue      Int?      @map("discount_value") // either discountPercentage or discountValue must have a value, but not both
+  quantity           Int? // if set, the number of coupons will be limited
+  validFrom          DateTime? @map("valid_from") // if set, coupons cannot be used for bookings that finish before this date
+  validTo            DateTime? @map("valid_to") // if set, coupons cannot be used for bookings that start after this date
+  expiresAt          DateTime? @map("expires_at") // if set, the coupon cannot be used after this date
+  organisationId     Int       @map("organisation_id")
+  spaceId            Int?      @map("space_id") // if set, the coupon can only be used for bookings in the specified space
+  slotId             Int?      @map("slot_id") // if set, the coupon can only be used for bookings in the specified slot
+  customFields       Json?     @map("custom_fields")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+  deletedAt          DateTime? @map("deleted_at")
+
+  organisation Organisation @relation(fields: [organisationId], references: [id])
+  space        Space?       @relation(fields: [spaceId], references: [id])
+  slot         Slot?        @relation(fields: [slotId], references: [id])
+  bookings     Booking[]
+
+  @@unique([code, organisationId, deletedAt])
+  @@map("coupon")
 }
