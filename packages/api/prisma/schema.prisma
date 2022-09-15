@@ -40,10 +40,18 @@ model User {
   @@map("user")
 }
 
+enum Role {
+  customer
+  administrator
+
+  @@map("role")
+}
+
 model OrganisationUser {
   id             Int      @id @default(autoincrement())
   organisationId Int      @map("organisation_id")
   userId         Int      @map("user_id")
+  roles          Role     @default(customer)
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 
@@ -56,15 +64,15 @@ model OrganisationUser {
 model Organisation {
   id           Int      @id @default(autoincrement())
   name         String
-  customfields Json?
+  customFields Json?    @map("custom_fields")
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
-  spaces           Space[]
-  unavailables     Unuavailable[]
-  options          Option[]
-  coupons          Coupon[]
-  OrganisationUser OrganisationUser[]
+  spaces            Space[]
+  unavailables      Unavailable[]
+  options           Option[]
+  coupons           Coupon[]
+  organisationUsers OrganisationUser[]
 
   @@map("organisation")
 }
@@ -72,15 +80,15 @@ model Organisation {
 model Space {
   id             Int       @id @default(autoincrement())
   name           String
-  customFields   Json?     @map("custom_fields")
   organisationId Int       @map("organisation_id")
+  customFields   Json?     @map("custom_fields")
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
   deletedAt      DateTime? @map("deleted_at")
 
-  organisation Organisation   @relation(fields: [organisationId], references: [id])
+  organisation Organisation  @relation(fields: [organisationId], references: [id])
   slots        Slot[]
-  unavailables Unuavailable[]
+  unavailables Unavailable[]
   options      Option[]
   coupons      Coupon[]
 
@@ -110,7 +118,7 @@ model Slot {
   @@map("slot")
 }
 
-model Unuavailable {
+model Unavailable {
   id             Int      @id @default(autoincrement())
   reason         String
   organisationId Int      @map("organisation_id")
@@ -123,7 +131,7 @@ model Unuavailable {
   organisation Organisation @relation(fields: [organisationId], references: [id])
   space        Space?       @relation(fields: [spaceId], references: [id])
 
-  @@map("unuavailable")
+  @@map("unavailable")
 }
 
 model Option {
@@ -139,10 +147,10 @@ model Option {
   updatedAt      DateTime  @updatedAt @map("updated_at")
   deletedAt      DateTime? @map("deleted_at")
 
-  organisation  Organisation    @relation(fields: [organisationId], references: [id])
-  space         Space?          @relation(fields: [spaceId], references: [id])
-  slot          Slot?           @relation(fields: [slotId], references: [id])
-  BookingOption BookingOption[]
+  organisation   Organisation    @relation(fields: [organisationId], references: [id])
+  space          Space?          @relation(fields: [spaceId], references: [id])
+  slot           Slot?           @relation(fields: [slotId], references: [id])
+  bookingOptions BookingOption[]
 
   @@map("option")
 }
@@ -151,7 +159,7 @@ model BookingSlot {
   bookingId         Int      @map("booking_id")
   slotId            Int      @map("slot_id")
   startTime         DateTime @map("start_time")
-  endTime           DateTime @map("end_time")
+  length            Int // length, in minutes, of the booking
   slotBlockPrice    Int      @map("block_price") // copy of the slot block price at the time of booking, in case the slot block price changes
   slotBlockQuantity Int      @map("block_quantity") // calulated from the booking time span and the slot block length - makes it easier to calculate the booking price
   slotSnapshot      Json     @map("slot_snapshot") // copy of the slot at the time of booking, in case the slot changes
@@ -190,10 +198,10 @@ model Booking {
   createdAt                DateTime @default(now()) @map("created_at")
   updatedAt                DateTime @updatedAt @map("updated_at")
 
-  user          User            @relation(fields: [userId], references: [id])
-  coupon        Coupon?         @relation(fields: [couponId], references: [id])
-  bookingSlots  BookingSlot[]
-  bookingOption BookingOption[]
+  user           User            @relation(fields: [userId], references: [id])
+  coupon         Coupon?         @relation(fields: [couponId], references: [id])
+  bookingSlots   BookingSlot[]
+  bookingOptions BookingOption[]
 
   @@map("booking")
 }

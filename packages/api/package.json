@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "migrate:create": "prisma migrate dev --create-only",
+    "migrate:deploy": "prisma migrate deploy",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
