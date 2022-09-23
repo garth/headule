@@ -57,7 +57,7 @@ model OrganisationUser {
   id             Int      @id @default(autoincrement())
   organisationId Int      @map("organisation_id")
   userId         Int      @map("user_id")
-  roles          Role     @default(customer)
+  roles          Role[]   @default([customer])
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 

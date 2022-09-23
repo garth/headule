@@ -6,6 +6,8 @@
   "scripts": {
     "migrate:create": "prisma migrate dev --create-only",
     "migrate:deploy": "prisma migrate deploy",
+    "dev": "NODE_ENV=development ts-node-dev --exit-child --respawn src/index.ts",
+    "start": "ts-node src/main.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -14,18 +16,23 @@
   "dependencies": {
     "@graphql-yoga/node": "^2.13.13",
     "@pothos/core": "^3.21.0",
-    "@pothos/plugin-prisma": "^3.33.0",
+    "@pothos/plugin-prisma": "^3.34.0",
+    "@pothos/plugin-prisma-utils": "^0.3.0",
     "@pothos/plugin-scope-auth": "^3.13.0",
     "@pothos/plugin-validation": "^3.7.0",
     "@prisma/client": "^4.3.1",
     "graphql": "^16.6.0",
+    "graphql-scalars": "^1.18.0",
     "zod": "^3.19.1"
   },
   "devDependencies": {
-    "esbuild": "^0.15.7",
+    "@types/node": "^18.7.19",
+    "esbuild": "^0.15.9",
     "eslint": "^8.23.1",
     "prettier": "^2.7.1",
     "prisma": "^4.3.1",
+    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^4.8.3"
   },
   "volta": {
