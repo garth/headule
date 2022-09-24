@@ -15,6 +15,7 @@ export const builder = new SchemaBuilder<{
       Input: Date
     }
     Json: {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       Output: any
       Input: string
     }
