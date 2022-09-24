@@ -1,4 +1,5 @@
 import { DateTimeResolver, JSONResolver } from 'graphql-scalars'
+import ErrorsPlugin from '@pothos/plugin-errors'
 import SchemaBuilder from '@pothos/core'
 import PrismaPlugin from '@pothos/plugin-prisma'
 import PrismaUtilsPlugin from '@pothos/plugin-prisma-utils'
@@ -6,6 +7,7 @@ import ScopeAuthPlugin from '@pothos/plugin-scope-auth'
 import ValidationPlugin from '@pothos/plugin-validation'
 import { prisma } from './db'
 import type PrismaTypes from '../generated/pothos-types'
+import { ErrorWithCode } from './schema/error'
 
 export const builder = new SchemaBuilder<{
   PrismaTypes: PrismaTypes
@@ -21,7 +23,10 @@ export const builder = new SchemaBuilder<{
     }
   }
 }>({
-  plugins: [ScopeAuthPlugin, PrismaPlugin, PrismaUtilsPlugin, ValidationPlugin],
+  plugins: [ErrorsPlugin, ScopeAuthPlugin, PrismaPlugin, PrismaUtilsPlugin, ValidationPlugin],
+  errorOptions: {
+    defaultTypes: [ErrorWithCode],
+  },
   authScopes: () => ({}),
   prisma: {
     client: prisma,

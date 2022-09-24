@@ -9,6 +9,7 @@ importers:
     specifiers:
       '@graphql-yoga/node': ^2.13.13
       '@pothos/core': ^3.21.0
+      '@pothos/plugin-errors': ^3.7.0
       '@pothos/plugin-prisma': ^3.34.0
       '@pothos/plugin-prisma-utils': ^0.3.0
       '@pothos/plugin-scope-auth': ^3.13.0
@@ -34,6 +35,7 @@ importers:
     dependencies:
       '@graphql-yoga/node': 2.13.13_graphql@16.6.0
       '@pothos/core': 3.21.0_graphql@16.6.0
+      '@pothos/plugin-errors': 3.7.0_77drd5c75cmluqqlsobcafssve
       '@pothos/plugin-prisma': 3.34.0_jpwm4dw3k5p2oph4d65t7invby
       '@pothos/plugin-prisma-utils': 0.3.0_3yii4t4agx77u7tzxzabl3keoe
       '@pothos/plugin-scope-auth': 3.13.0_77drd5c75cmluqqlsobcafssve
@@ -345,6 +347,16 @@ packages:
     peerDependencies:
       graphql: '>=15.1.0'
     dependencies:
+      graphql: 16.6.0
+    dev: false
+
+  /@pothos/plugin-errors/3.7.0_77drd5c75cmluqqlsobcafssve:
+    resolution: {integrity: sha512-h7Ed9VfiylI0s5R7Q5EyHDxiVqNiukATlaDld3AwSXRn1/MAnlEkccNvFQgbIwWkYiWp6bbcuQbJTHjFjUSaMg==}
+    peerDependencies:
+      '@pothos/core': '*'
+      graphql: '>=15.1.0'
+    dependencies:
+      '@pothos/core': 3.21.0_graphql@16.6.0
       graphql: 16.6.0
     dev: false
 
