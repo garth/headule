@@ -32,12 +32,14 @@ model AuditLog {
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
-  email        String   @unique
-  name         String
-  customFields Json?    @map("custom_fields")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  name          String
+  passwordHash  String   @map("password_hash")
+  emailVerified Boolean  @default(false) @map("email_verified")
+  customFields  Json?    @map("custom_fields")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
   bookings          Booking[]
   organisationUsers OrganisationUser[]
@@ -46,18 +48,11 @@ model User {
   @@map("user")
 }
 
-enum Role {
-  customer
-  administrator
-
-  @@map("role")
-}
-
 model OrganisationUser {
   id             Int      @id @default(autoincrement())
   organisationId Int      @map("organisation_id")
   userId         Int      @map("user_id")
-  roles          Role[]   @default([customer])
+  role           String
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 

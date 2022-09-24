@@ -21,14 +21,16 @@
     "@pothos/plugin-scope-auth": "^3.13.0",
     "@pothos/plugin-validation": "^3.7.0",
     "@prisma/client": "^4.3.1",
+    "bcrypt": "^5.0.1",
     "graphql": "^16.6.0",
     "graphql-scalars": "^1.18.0",
     "zod": "^3.19.1"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/node": "^18.7.19",
     "esbuild": "^0.15.9",
-    "eslint": "^8.23.1",
+    "eslint": "^8.24.0",
     "prettier": "^2.7.1",
     "prisma": "^4.3.1",
     "ts-node": "^10.9.1",

@@ -5,7 +5,7 @@ builder.prismaObject('OrganisationUser', {
     id: t.exposeInt('id'),
     organisationId: t.exposeInt('organisationId'),
     userId: t.exposeInt('userId'),
-    roles: t.exposeStringList('roles'),
+    role: t.exposeString('role'),
 
     organisation: t.relation('organisation'),
     user: t.relation('user'),

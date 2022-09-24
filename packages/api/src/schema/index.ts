@@ -9,6 +9,8 @@ import './slot'
 import './space'
 import './unavailable'
 import './user'
+import './mutation'
+import './query'
 
 import { builder } from '../builder'
 
