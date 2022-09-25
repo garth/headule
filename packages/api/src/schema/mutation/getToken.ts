@@ -25,6 +25,7 @@ builder.mutationField('getToken', (t) =>
   t.field({
     type: 'TokenResponse',
     nullable: true,
+    errors: {},
     args: {
       user: t.arg({ type: SignInInput, required: true }),
     },

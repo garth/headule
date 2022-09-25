@@ -2,8 +2,6 @@ import { createServer } from '@graphql-yoga/node'
 import { initContextCache } from '@pothos/core'
 import { schema } from './schema'
 import jwt from 'jsonwebtoken'
-import { prisma } from './database'
-import { User } from '../generated/prisma/client'
 
 const JWT_SECRET = process.env.JWT_SECRET
 
@@ -12,10 +10,10 @@ export const server = createServer({
   context: async ({ req }) => {
     const token = req.headers.authorization
 
-    let user: User | null = null
-    if (token != null && JWT_SECRET != null) {
+    let userId: number | null = null
+    if (token != null && JWT_SECRET != null && token.startsWith('Bearer ')) {
       const data = await new Promise<{ userId: number } | null>((resolve, reject) => {
-        jwt.verify(token, JWT_SECRET, (err, decoded) => {
+        jwt.verify(token.slice(7), JWT_SECRET, (err, decoded) => {
           if (err) {
             reject(err)
           } else {
@@ -23,20 +21,14 @@ export const server = createServer({
           }
         })
       })
-      if (data?.userId != null) {
-        user = await prisma.user.findUnique({
-          where: {
-            id: data.userId,
-          },
-        })
-      }
+      userId = data?.userId ?? null
     }
 
     return {
       // Adding this will prevent any issues if you server implementation
       // copies or extends the context object before passing it to your resolvers
       ...initContextCache(),
-      user,
+      userId,
     }
   },
 })

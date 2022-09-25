@@ -1,6 +1,6 @@
 export enum ErrorCode {
-  EMAIL_IN_USE,
-  SIGN_IN_FAILED,
+  EMAIL_IN_USE = 'EMAIL_IN_USE',
+  SIGN_IN_FAILED = 'SIGN_IN_FAILED',
 }
 
 export class ErrorWithCode extends Error {

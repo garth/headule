@@ -14,6 +14,7 @@ builder.mutationField('createUser', (t) =>
   t.prismaField({
     type: 'User',
     nullable: true,
+    errors: {},
     args: {
       user: t.arg({ type: CreateUserInput, required: true }),
     },

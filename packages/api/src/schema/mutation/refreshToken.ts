@@ -7,6 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET
 builder.mutationField('refreshToken', (t) =>
   t.field({
     type: 'TokenResponse',
+    errors: {},
     nullable: true,
     resolve: async (_root, _args, ctx) => ({
       token: await new Promise<string | null>((resolve, reject) => {
