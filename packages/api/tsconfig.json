@@ -3,12 +3,12 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "ESNext",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "noEmit": true,
     "skipLibCheck": false,
     "strict": true,
     "target": "es2022"
   },
-  "include": ["prisma/*.ts", "src/**/*", "scripts/**/*"]
+  "include": ["generated/**/*", "prisma/*.ts", "src/**/*", "scripts/**/*"]
 }

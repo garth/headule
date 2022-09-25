@@ -12,6 +12,9 @@
     "lint": "pnpm eslint 'src/**/*.{ts,tsx}' && tsc --skipLibCheck",
     "prettier": "prettier --write \"src/**/*.{js,json,ts,tsx,css,scss,html}\""
   },
+  "prisma": {
+    "seed": "node -r @swc-node/register prisma/seed.ts"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
