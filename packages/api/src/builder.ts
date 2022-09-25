@@ -27,11 +27,7 @@ export const builder = new SchemaBuilder<{
     }
   }
   Objects: {
-    SignInResponse: {
-      user: User | null
-      token: string | null
-    }
-    RefreshTokenResponse: {
+    TokenResponse: {
       token: string | null
     }
   }

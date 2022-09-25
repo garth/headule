@@ -1,12 +1,12 @@
 import { builder } from '../../builder'
 import jwt from 'jsonwebtoken'
-import { jwtOptions } from './signIn'
+import { jwtOptions } from './getToken'
 
 const JWT_SECRET = process.env.JWT_SECRET
 
 builder.mutationField('refreshToken', (t) =>
   t.field({
-    type: 'RefreshTokenResponse',
+    type: 'TokenResponse',
     nullable: true,
     resolve: async (_root, _args, ctx) => ({
       token: await new Promise<string | null>((resolve, reject) => {

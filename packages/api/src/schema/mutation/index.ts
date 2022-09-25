@@ -1,3 +1,3 @@
 import './createUser'
-import './refreshToken'
+import './getToken'
 import './signIn'
