@@ -5,11 +5,15 @@ import PrismaPlugin from '@pothos/plugin-prisma'
 import PrismaUtilsPlugin from '@pothos/plugin-prisma-utils'
 import ScopeAuthPlugin from '@pothos/plugin-scope-auth'
 import ValidationPlugin from '@pothos/plugin-validation'
-import { prisma } from './db'
+import { prisma } from './database'
 import type PrismaTypes from '../generated/pothos-types'
 import { ErrorWithCode } from './schema/error'
+import { User } from '../generated/prisma/client'
 
 export const builder = new SchemaBuilder<{
+  Context: {
+    userId: number | null
+  }
   PrismaTypes: PrismaTypes
   Scalars: {
     DateTime: {
@@ -20,6 +24,12 @@ export const builder = new SchemaBuilder<{
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       Output: any
       Input: string
+    }
+  }
+  Objects: {
+    SignInResponse: {
+      user: User | null
+      token: string | null
     }
   }
 }>({

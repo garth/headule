@@ -1,5 +1,5 @@
 import { builder } from '../../builder'
-import { prisma } from '../../db'
+import { prisma } from '../../database'
 
 builder.queryField('user', (t) =>
   t.prismaField({
@@ -8,11 +8,11 @@ builder.queryField('user', (t) =>
     args: {
       userId: t.arg({ type: 'Int', required: true }),
     },
-    resolve: (query, _, { userId }) =>
+    resolve: (query, _parent, args) =>
       prisma.user.findUnique({
         ...query,
         where: {
-          id: userId,
+          id: args.userId,
         },
       }),
   })

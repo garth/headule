@@ -1,5 +1,5 @@
 import { builder } from '../../builder'
-import { prisma } from '../../db'
+import { prisma } from '../../database'
 import bcrypt from 'bcrypt'
 
 const CreateUserInput = builder.inputType('CreateUserInput', {
@@ -17,13 +17,13 @@ builder.mutationField('createUser', (t) =>
     args: {
       user: t.arg({ type: CreateUserInput, required: true }),
     },
-    resolve: async (query, _, { user }) =>
+    resolve: async (query, _parent, args) =>
       prisma.user.create({
         ...query,
         data: {
-          name: user.name,
-          email: user.email,
-          passwordHash: await bcrypt.hash(user.password, 10),
+          name: args.user.name,
+          email: args.user.email,
+          passwordHash: await bcrypt.hash(args.user.password, 10),
         },
       }),
   })
