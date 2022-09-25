@@ -15,7 +15,11 @@ const SignInInput = builder.inputType('SignInInput', {
   }),
 })
 
-builder.objectType('TokenResponse', {})
+builder.objectType('TokenResponse', {
+  fields: (t) => ({
+    token: t.exposeString('token', { nullable: true }),
+  }),
+})
 
 builder.mutationField('getToken', (t) =>
   t.field({
