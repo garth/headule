@@ -7,7 +7,7 @@ import { User } from '../generated/prisma/client'
 
 const JWT_SECRET = process.env.JWT_SECRET
 
-const server = createServer({
+export const server = createServer({
   schema,
   context: async ({ req }) => {
     const token = req.headers.authorization
@@ -39,8 +39,4 @@ const server = createServer({
       user,
     }
   },
-})
-
-server.start().catch((error) => {
-  console.error(error)
 })
