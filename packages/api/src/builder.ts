@@ -8,7 +8,6 @@ import ValidationPlugin from '@pothos/plugin-validation'
 import { prisma } from './database'
 import type PrismaTypes from '../generated/pothos-types'
 import { ErrorWithCode } from './schema/error'
-import { User } from '../generated/prisma/client'
 
 export const builder = new SchemaBuilder<{
   Context: {
