@@ -5,4 +5,7 @@ export default defineConfig({
   test: {
     environment: 'node',
   },
+  esbuild: {
+    platform: 'node',
+  },
 })
