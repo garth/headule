@@ -1,0 +1,182 @@
+type Booking {
+  bookingOptions: [BookingOption!]!
+  bookingSlots: [BookingSlot!]!
+  coupon: Coupon!
+  couponDiscountPercentage: Int
+  couponDiscountValue: Int
+  couponId: Int
+  couponSnapshot: Json
+  customFields: Json
+  id: Int!
+  user: User!
+  userId: Int!
+}
+
+type BookingOption {
+  booking: Booking!
+  bookingId: Int!
+  customFields: Json
+  option: Option!
+  optionId: Int!
+  optionSnapshot: Json!
+  quantity: Int!
+  unitPrice: Int!
+}
+
+type BookingSlot {
+  booking: Booking!
+  bookingId: Int!
+  customFields: Json
+  length: Int!
+  slot: Slot!
+  slotBlockPrice: Int!
+  slotBlockQuantity: Int!
+  slotId: Int!
+  slotSnapshot: Json!
+  startTime: DateTime!
+}
+
+type Coupon {
+  bookings: [Booking!]!
+  code: String!
+  customFields: Json
+  discountPercentage: Int
+  discountValue: Int
+  expiresAt: DateTime
+  id: Int!
+  organisation: Organisation!
+  organisationId: Int!
+  quantity: Int
+  slot: Slot
+  slotId: Int
+  space: Space
+  spaceId: Int
+  validFrom: DateTime
+  validTo: DateTime
+}
+
+input CreateUserInput {
+  email: String!
+  name: String!
+  password: String!
+}
+
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
+
+enum ErrorCode {
+  EMAIL_IN_USE
+  SIGN_IN_FAILED
+}
+
+type ErrorWithCode {
+  code: ErrorCode!
+  message: String!
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar Json
+
+type Mutation {
+  createUser(user: CreateUserInput!): User
+  getToken(user: SignInInput!): TokenResponse
+  refreshToken: TokenResponse
+}
+
+type Option {
+  bookingOptions: [BookingOption!]!
+  customFields: Json
+  id: Int!
+  maxUnits: Int!
+  name: String!
+  organisation: Organisation!
+  organisationId: Int!
+  slot: Slot
+  slotId: Int
+  space: Space
+  spaceId: Int
+  unitPrice: Int!
+}
+
+type Organisation {
+  coupons: [Coupon!]!
+  customFields: Json
+  id: Int!
+  name: String!
+  options: [Option!]!
+  organisationUsers: [OrganisationUser!]!
+  spaces: [Space!]!
+  unavailables: [Unavailable!]!
+}
+
+type OrganisationUser {
+  id: Int!
+  organisation: Organisation!
+  organisationId: Int!
+  role: String!
+  user: User!
+  userId: Int!
+}
+
+type Query {
+  user(userId: Int): User
+}
+
+input SignInInput {
+  email: String!
+  password: String!
+}
+
+type Slot {
+  blockLength: Int!
+  blockPrice: Int!
+  bookingSlots: [BookingSlot!]!
+  coupons: [Coupon!]!
+  customFields: Json
+  daysOfMonth: [Int!]!
+  daysOfWeek: [Int!]!
+  id: Int!
+  length: Int!
+  name: String!
+  options: [Option!]!
+  space: Space!
+  spaceId: Int!
+  startTime: Int!
+}
+
+type Space {
+  coupons: [Coupon!]!
+  customFields: Json
+  id: Int!
+  name: String!
+  options: [Option!]!
+  organisation: Organisation!
+  organisationId: Int!
+  slots: [Slot!]!
+  unavailables: [Unavailable!]!
+}
+
+type TokenResponse
+
+type Unavailable {
+  endTime: DateTime!
+  id: Int!
+  organisation: Organisation!
+  organisationId: Int!
+  reason: String!
+  space: Space
+  spaceId: Int
+  startTime: DateTime!
+}
+
+type User {
+  bookings: [Booking!]!
+  customFields: Json
+  email: String!
+  id: Int!
+  name: String!
+}

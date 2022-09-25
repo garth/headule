@@ -1,7 +1,7 @@
 import { builder } from '../../builder'
 import { prisma } from '../../database'
 import bcrypt from 'bcrypt'
-import { ErrorCode, ErrorWithCode } from '../error'
+import { ErrorCode, ErrorWithCode } from '../../error'
 import jwt from 'jsonwebtoken'
 
 const JWT_SECRET = process.env.JWT_SECRET
@@ -14,6 +14,8 @@ const SignInInput = builder.inputType('SignInInput', {
     password: t.string({ required: true }),
   }),
 })
+
+builder.objectType('TokenResponse', {})
 
 builder.mutationField('getToken', (t) =>
   t.field({
