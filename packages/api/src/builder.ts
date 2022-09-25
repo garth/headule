@@ -31,6 +31,9 @@ export const builder = new SchemaBuilder<{
       user: User | null
       token: string | null
     }
+    RefreshTokenResponse: {
+      token: string | null
+    }
   }
 }>({
   plugins: [ErrorsPlugin, ScopeAuthPlugin, PrismaPlugin, PrismaUtilsPlugin, ValidationPlugin],

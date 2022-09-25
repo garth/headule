@@ -6,6 +6,8 @@ import jwt from 'jsonwebtoken'
 
 const JWT_SECRET = process.env.JWT_SECRET
 
+export const jwtOptions: jwt.SignOptions = { expiresIn: '1d' }
+
 const SignInInput = builder.inputType('SignInInput', {
   fields: (t) => ({
     email: t.string({ required: true }),
@@ -33,7 +35,7 @@ const SignInResponse = builder.objectType('SignInResponse', {
       resolve: async (_root, _args, ctx) =>
         new Promise<string | null>((resolve, reject) => {
           if (JWT_SECRET != null && ctx.userId != null) {
-            jwt.sign({ userId: ctx.userId }, JWT_SECRET, { expiresIn: '1d' }, (err, token) => {
+            jwt.sign({ userId: ctx.userId }, JWT_SECRET, jwtOptions, (err, token) => {
               if (err) {
                 reject(err)
               } else {
