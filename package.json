@@ -10,6 +10,6 @@
   "author": "",
   "license": "ISC",
   "volta": {
-    "node": "16.17.0"
+    "node": "16.17.1"
   }
 }

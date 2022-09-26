@@ -5,7 +5,7 @@ importers:
   .:
     specifiers: {}
 
-  packages/api:
+  api:
     specifiers:
       '@graphql-yoga/node': ^2.13.13
       '@pothos/core': ^3.21.0
