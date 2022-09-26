@@ -5,7 +5,9 @@ import jwt from 'jsonwebtoken'
 
 const JWT_SECRET = process.env.JWT_SECRET
 
+const port = parseInt(process.env.PORT ?? '3000', 10)
 export const server = createServer({
+  port,
   schema,
   context: async ({ req }) => {
     const token = req.headers.authorization
