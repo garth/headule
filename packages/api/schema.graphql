@@ -82,9 +82,27 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 scalar Json
 
 type Mutation {
-  createUser(user: CreateUserInput!): User
-  getToken(user: SignInInput!): TokenResponse
-  refreshToken: TokenResponse
+  createUser(user: CreateUserInput!): MutationCreateUserResult
+  getToken(user: SignInInput!): MutationGetTokenResult
+  refreshToken: MutationRefreshTokenResult
+}
+
+union MutationCreateUserResult = ErrorWithCode | MutationCreateUserSuccess
+
+type MutationCreateUserSuccess {
+  data: User!
+}
+
+union MutationGetTokenResult = ErrorWithCode | MutationGetTokenSuccess
+
+type MutationGetTokenSuccess {
+  data: TokenResponse!
+}
+
+union MutationRefreshTokenResult = ErrorWithCode | MutationRefreshTokenSuccess
+
+type MutationRefreshTokenSuccess {
+  data: TokenResponse!
 }
 
 type Option {
@@ -160,7 +178,9 @@ type Space {
   unavailables: [Unavailable!]!
 }
 
-type TokenResponse
+type TokenResponse {
+  token: String
+}
 
 type Unavailable {
   endTime: DateTime!
