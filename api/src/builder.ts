@@ -28,6 +28,7 @@ export const builder = new SchemaBuilder<{
   Objects: {
     TokenResponse: {
       token: string | null
+      expires: Date
     }
   }
 }>({

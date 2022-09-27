@@ -59,6 +59,7 @@ builder.mutationField('getToken', (t) =>
               resolve(null)
             }
           }),
+          expires: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day
         }
       } else {
         throw new ApiError(ErrorCode.SIGN_IN_FAILED, 'Invalid email or password')
