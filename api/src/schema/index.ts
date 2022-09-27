@@ -1,5 +1,4 @@
-import './error'
-
+import './apiError'
 import './booking'
 import './bookingOption'
 import './bookingSlot'

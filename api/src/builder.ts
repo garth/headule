@@ -7,7 +7,7 @@ import ScopeAuthPlugin from '@pothos/plugin-scope-auth'
 import ValidationPlugin from '@pothos/plugin-validation'
 import { prisma } from './database'
 import type PrismaTypes from '../generated/pothos-types'
-import { ErrorWithCode } from './error'
+import { ApiError } from './apiError'
 
 export const builder = new SchemaBuilder<{
   Context: {
@@ -33,7 +33,7 @@ export const builder = new SchemaBuilder<{
 }>({
   plugins: [ErrorsPlugin, ScopeAuthPlugin, PrismaPlugin, PrismaUtilsPlugin, ValidationPlugin],
   errorOptions: {
-    defaultTypes: [ErrorWithCode],
+    defaultTypes: [ApiError],
   },
   authScopes: () => ({}),
   prisma: {

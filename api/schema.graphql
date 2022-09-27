@@ -1,3 +1,8 @@
+type ApiError {
+  code: ErrorCode!
+  message: String!
+}
+
 type Booking {
   bookingOptions: [BookingOption!]!
   bookingSlots: [BookingSlot!]!
@@ -71,11 +76,6 @@ enum ErrorCode {
   SIGN_IN_FAILED
 }
 
-type ErrorWithCode {
-  code: ErrorCode!
-  message: String!
-}
-
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -87,19 +87,19 @@ type Mutation {
   refreshToken: MutationRefreshTokenResult
 }
 
-union MutationCreateUserResult = ErrorWithCode | MutationCreateUserSuccess
+union MutationCreateUserResult = ApiError | MutationCreateUserSuccess
 
 type MutationCreateUserSuccess {
   data: User!
 }
 
-union MutationGetTokenResult = ErrorWithCode | MutationGetTokenSuccess
+union MutationGetTokenResult = ApiError | MutationGetTokenSuccess
 
 type MutationGetTokenSuccess {
   data: TokenResponse!
 }
 
-union MutationRefreshTokenResult = ErrorWithCode | MutationRefreshTokenSuccess
+union MutationRefreshTokenResult = ApiError | MutationRefreshTokenSuccess
 
 type MutationRefreshTokenSuccess {
   data: TokenResponse!

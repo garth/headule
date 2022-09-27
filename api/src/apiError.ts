@@ -3,7 +3,7 @@ export enum ErrorCode {
   SIGN_IN_FAILED = 'SIGN_IN_FAILED',
 }
 
-export class ErrorWithCode extends Error {
+export class ApiError extends Error {
   public code: ErrorCode
   constructor(code: ErrorCode, message: string) {
     super(message)

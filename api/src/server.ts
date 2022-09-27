@@ -1,7 +1,7 @@
 import { createServer } from '@graphql-yoga/node'
 import { initContextCache } from '@pothos/core'
 import { schema } from './schema'
-import jwt from 'jsonwebtoken'
+import { verify } from 'jsonwebtoken'
 
 const JWT_SECRET = process.env.JWT_SECRET
 
@@ -15,7 +15,7 @@ export const server = createServer({
     let userId: number | null = null
     if (token != null && JWT_SECRET != null && token.startsWith('Bearer ')) {
       const data = await new Promise<{ userId: number } | null>((resolve, reject) => {
-        jwt.verify(token.slice(7), JWT_SECRET, (err, decoded) => {
+        verify(token.slice(7), JWT_SECRET, (err, decoded) => {
           if (err) {
             reject(err)
           } else {

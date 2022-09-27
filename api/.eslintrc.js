@@ -5,14 +5,26 @@ module.exports = {
   },
   ignorePatterns: [],
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'prettier'],
+  plugins: ['@typescript-eslint', 'import', 'prettier'],
   extends: [
     'eslint:recommended',
+    'plugin:import/recommended',
+    'plugin:import/typescript',
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'prettier',
   ],
+  settings: {
+    'import/parsers': {
+      '@typescript-eslint/parser': ['.ts', '.tsx'],
+    },
+    'import/resolver': {
+      typescript: {
+        alwaysTryTypes: true,
+      },
+    },
+  },
   parserOptions: {
     ecmaVersion: 2022,
     sourceType: 'module',
@@ -24,6 +36,7 @@ module.exports = {
     '@typescript-eslint/ban-ts-comment': 'off',
     '@typescript-eslint/ban-ts-ignore': 'off',
     '@typescript-eslint/ban-types': 'off',
+    '@typescript-eslint/consistent-type-imports': ['warn', { prefer: 'type-imports' }],
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-empty-function': 'off',
@@ -41,6 +54,8 @@ module.exports = {
     '@typescript-eslint/restrict-template-expressions': 'off',
     '@typescript-eslint/unbound-method': 'off',
     curly: ['error', 'all'],
+    'import/no-named-as-default': 'off',
+    'import/no-unresolved': 'error',
     'linebreak-style': ['error', 'unix'],
     'no-console': 'off',
     'no-eval': 'error',

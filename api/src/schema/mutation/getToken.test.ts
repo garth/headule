@@ -1,8 +1,8 @@
 import { expect, describe, it } from 'vitest'
 import { server } from '../../server'
 import request from 'supertest'
-import { ErrorCode } from '../../error'
-import jwt from 'jsonwebtoken'
+import { ErrorCode } from '../../apiError'
+import { verify } from 'jsonwebtoken'
 
 const JWT_SECRET = process.env.JWT_SECRET ?? ''
 
@@ -15,7 +15,7 @@ describe('getToken', () => {
           mutation {
             getToken(user: {email: "garth@test.com", password: "password"}) {
               __typename
-              ... on ErrorWithCode {
+              ... on ApiError {
                 code
                 message
               }
@@ -33,7 +33,7 @@ describe('getToken', () => {
     expect(response.body.data.getToken.__typename).toBe('MutationGetTokenSuccess')
     const token = response.body.data.getToken.data.token as string
     const data = await new Promise<{ userId: number } | null>((resolve, reject) => {
-      jwt.verify(token, JWT_SECRET, (err, decoded) => {
+      verify(token, JWT_SECRET, (err, decoded) => {
         if (err) {
           reject(err)
         } else {
@@ -52,7 +52,7 @@ describe('getToken', () => {
           mutation {
             getToken(user: {email: "invalid@test.com", password: "password"}) {
               __typename
-              ... on ErrorWithCode {
+              ... on ApiError {
                 code
                 message
               }
@@ -67,7 +67,7 @@ describe('getToken', () => {
       })
 
     expect(response.status).toBe(200)
-    expect(response.body.data.getToken.__typename).toBe('ErrorWithCode')
+    expect(response.body.data.getToken.__typename).toBe('ApiError')
     expect(response.body.data.getToken.code).toBe(ErrorCode.SIGN_IN_FAILED)
   })
 
@@ -79,7 +79,7 @@ describe('getToken', () => {
           mutation {
             getToken(user: {email: "garth@test.com", password: "invalid"}) {
               __typename
-              ... on ErrorWithCode {
+              ... on ApiError {
                 code
                 message
               }
@@ -94,7 +94,7 @@ describe('getToken', () => {
       })
 
     expect(response.status).toBe(200)
-    expect(response.body.data.getToken.__typename).toBe('ErrorWithCode')
+    expect(response.body.data.getToken.__typename).toBe('ApiError')
     expect(response.body.data.getToken.code).toBe(ErrorCode.SIGN_IN_FAILED)
   })
 })

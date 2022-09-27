@@ -2,7 +2,7 @@ import { expect, describe, it, beforeAll } from 'vitest'
 import { server } from '../../server'
 import request from 'supertest'
 import { getToken } from '../query/user.test'
-import jwt from 'jsonwebtoken'
+import { verify } from 'jsonwebtoken'
 
 const JWT_SECRET = process.env.JWT_SECRET ?? ''
 
@@ -21,7 +21,7 @@ describe('refreshToken', () => {
         mutation {
           refreshToken {
             __typename
-            ... on ErrorWithCode {
+            ... on ApiError {
               code
               message
             }
@@ -39,7 +39,7 @@ describe('refreshToken', () => {
     expect(response.body.data.refreshToken.__typename).toBe('MutationRefreshTokenSuccess')
     const newToken = response.body.data.refreshToken.data.token as string
     const data = await new Promise<{ userId: number } | null>((resolve, reject) => {
-      jwt.verify(newToken, JWT_SECRET, (err, decoded) => {
+      verify(newToken, JWT_SECRET, (err, decoded) => {
         if (err) {
           reject(err)
         } else {

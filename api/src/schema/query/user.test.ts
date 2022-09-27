@@ -10,7 +10,7 @@ export const getToken = async (email: string, password: string): Promise<string>
         mutation ($email: String!, $password: String!) {
           getToken(user: {email: $email, password: $password}) {
             __typename
-            ... on ErrorWithCode {
+            ... on ApiError {
               code
               message
             }

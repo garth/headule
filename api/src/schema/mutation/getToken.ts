@@ -1,12 +1,13 @@
 import { builder } from '../../builder'
 import { prisma } from '../../database'
-import bcrypt from 'bcrypt'
-import { ErrorCode, ErrorWithCode } from '../../error'
-import jwt from 'jsonwebtoken'
+import { compare } from 'bcrypt'
+import { ErrorCode, ApiError } from '../../apiError'
+import type { SignOptions } from 'jsonwebtoken'
+import { sign } from 'jsonwebtoken'
 
 const JWT_SECRET = process.env.JWT_SECRET
 
-export const jwtOptions: jwt.SignOptions = { expiresIn: '1d' }
+export const jwtOptions: SignOptions = { expiresIn: '1d' }
 
 const SignInInput = builder.inputType('SignInInput', {
   fields: (t) => ({
@@ -40,14 +41,14 @@ builder.mutationField('getToken', (t) =>
         },
       })
 
-      if (user != null && (await bcrypt.compare(args.user.password, user.passwordHash))) {
+      if (user != null && (await compare(args.user.password, user.passwordHash))) {
         // add the user to the context for other resolvers
         ctx.userId = user.id
 
         return {
           token: await new Promise<string | null>((resolve, reject) => {
             if (JWT_SECRET != null && user.id != null) {
-              jwt.sign({ userId: user.id }, JWT_SECRET, jwtOptions, (err, token) => {
+              sign({ userId: user.id }, JWT_SECRET, jwtOptions, (err, token) => {
                 if (err) {
                   reject(err)
                 } else {
@@ -60,7 +61,7 @@ builder.mutationField('getToken', (t) =>
           }),
         }
       } else {
-        throw new ErrorWithCode(ErrorCode.SIGN_IN_FAILED, 'Invalid email or password')
+        throw new ApiError(ErrorCode.SIGN_IN_FAILED, 'Invalid email or password')
       }
     },
   })
