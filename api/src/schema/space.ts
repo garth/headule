@@ -2,9 +2,9 @@ import { builder } from '../builder'
 
 builder.prismaObject('Space', {
   fields: (t) => ({
-    id: t.exposeInt('id'),
+    id: t.exposeID('id'),
     name: t.exposeString('name'),
-    organisationId: t.exposeInt('organisationId'),
+    organisationId: t.exposeID('organisationId'),
     customFields: t.expose('customFields', { type: 'Json', nullable: true }),
 
     organisation: t.relation('organisation'),

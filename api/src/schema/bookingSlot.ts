@@ -2,8 +2,8 @@ import { builder } from '../builder'
 
 builder.prismaObject('BookingSlot', {
   fields: (t) => ({
-    bookingId: t.exposeInt('bookingId'),
-    slotId: t.exposeInt('slotId'),
+    bookingId: t.exposeID('bookingId'),
+    slotId: t.exposeID('slotId'),
     startTime: t.expose('startTime', { type: 'DateTime' }),
     length: t.exposeInt('length'),
     slotBlockPrice: t.exposeInt('slotBlockPrice'),

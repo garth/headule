@@ -51,7 +51,7 @@ describe('user', () => {
 
     expect(response.status).toBe(200)
     expect(response.body.data.user).toEqual({
-      id: 1,
+      id: '1',
       email: 'garth@test.com',
       name: 'Garth',
     })

@@ -5,8 +5,20 @@ import { hash } from 'bcrypt'
 const CreateUserInput = builder.inputType('CreateUserInput', {
   fields: (t) => ({
     name: t.string({ required: true }),
-    email: t.string({ required: true }),
-    password: t.string({ required: true }),
+    email: t.string({
+      required: true,
+      validate: {
+        type: 'string',
+        email: true,
+      },
+    }),
+    password: t.string({
+      required: true,
+      validate: {
+        type: 'string',
+        minLength: 8,
+      },
+    }),
   }),
 })
 

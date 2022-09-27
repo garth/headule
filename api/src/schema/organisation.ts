@@ -2,7 +2,7 @@ import { builder } from '../builder'
 
 builder.prismaObject('Organisation', {
   fields: (t) => ({
-    id: t.exposeInt('id'),
+    id: t.exposeID('id'),
     name: t.exposeString('name'),
     customFields: t.expose('customFields', { type: 'Json', nullable: true }),
 

@@ -2,7 +2,7 @@ import { builder } from '../builder'
 
 builder.prismaObject('Coupon', {
   fields: (t) => ({
-    id: t.exposeInt('id'),
+    id: t.exposeID('id'),
     code: t.exposeString('code'),
     discountPercentage: t.exposeInt('discountPercentage', { nullable: true }),
     discountValue: t.exposeInt('discountValue', { nullable: true }),
@@ -10,9 +10,9 @@ builder.prismaObject('Coupon', {
     validFrom: t.expose('validFrom', { type: 'DateTime', nullable: true }),
     validTo: t.expose('validTo', { type: 'DateTime', nullable: true }),
     expiresAt: t.expose('expiresAt', { type: 'DateTime', nullable: true }),
-    organisationId: t.exposeInt('organisationId'),
-    spaceId: t.exposeInt('spaceId', { nullable: true }),
-    slotId: t.exposeInt('slotId', { nullable: true }),
+    organisationId: t.exposeID('organisationId'),
+    spaceId: t.exposeID('spaceId', { nullable: true }),
+    slotId: t.exposeID('slotId', { nullable: true }),
     customFields: t.expose('customFields', { type: 'Json', nullable: true }),
 
     organisation: t.relation('organisation'),

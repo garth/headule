@@ -2,10 +2,10 @@ import { builder } from '../builder'
 
 builder.prismaObject('Unavailable', {
   fields: (t) => ({
-    id: t.exposeInt('id'),
+    id: t.exposeID('id'),
     reason: t.exposeString('reason'),
-    organisationId: t.exposeInt('organisationId'),
-    spaceId: t.exposeInt('spaceId', { nullable: true }),
+    organisationId: t.exposeID('organisationId'),
+    spaceId: t.exposeID('spaceId', { nullable: true }),
     startTime: t.expose('startTime', { type: 'DateTime' }),
     endTime: t.expose('endTime', { type: 'DateTime' }),
 
