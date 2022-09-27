@@ -1,0 +1,97 @@
+name: Build & Deploy Dev
+
+on:
+  push:
+    branches: ["dev"]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: "postgresql://headule:headule@localhost:5432/headule?schema=public"
+      JWT_SECRET: "b6f578a2bc24435c893df7d5652267ea"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - uses: pnpm/action-setup@v2.0.1
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 7
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build the app
+        working-directory: api
+        run: pnpm build
+
+      - name: Run lint
+        working-directory: api
+        run: pnpm lint
+
+      - name: Set up PostgreSQL for e2e tests
+        uses: Harmon758/postgresql-action@v1.0.0
+        with:
+          postgresql version: "12"
+          postgresql db: headule
+          postgresql user: headule
+          postgresql password: headule
+
+      - name: Run migrations
+        working-directory: api
+        run: pnpm prisma migrate deploy
+
+      - name: Seed database
+        working-directory: api
+        run: pnpm prisma db seed
+
+      - name: Run tests
+        working-directory: api
+        run: pnpm test:ci
+
+      - name: Clean deployment folder
+        run: rm -rf api/node_modules
+
+      - uses: a7ul/tar-action@v1.1.0
+        name: Package the app
+        with:
+          command: c
+          cwd: "./"
+          files: |
+            api/
+            .dockerignore
+            captain-definition
+            dockerfile
+            package.json
+            pnpm-lock.yaml
+            pnpm-workspace.yaml
+          outPath: deploy.tar
+
+      - name: Deploy the app
+        uses: caprover/deploy-from-github@v1.0.1
+        with:
+          server: "${{ secrets.CAPROVER_SERVER }}"
+          app: "${{ secrets.APP_NAME }}"
+          token: "${{ secrets.APP_TOKEN }}"

@@ -6,10 +6,10 @@ RUN npm install -g pnpm@7.12
 RUN pnpm config set store-dir /usr/.pnpm-store
 
 COPY pnpm-lock.yaml /usr/src/app/pnpm-lock.yaml
-RUN pnpm fetch
+RUN pnpm fetch --prod
 
 COPY . /usr/src/app/
-RUN pnpm install -r --offline
+RUN pnpm install -r --prod --offline
 
 EXPOSE 4000
 

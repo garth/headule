@@ -55,6 +55,7 @@ importers:
       graphql: 16.6.0
       graphql-scalars: 1.18.0_graphql@16.6.0
       jsonwebtoken: 8.5.1
+      prisma: 4.3.1
       zod: 3.19.1
     devDependencies:
       '@types/bcrypt': 5.0.0
@@ -68,7 +69,6 @@ importers:
       eslint-config-prettier: 8.5.0_eslint@8.24.0
       eslint-plugin-prettier: 4.2.1_cfn5x6ujhhgzv3423d6k7r2zzm
       prettier: 2.7.1
-      prisma: 4.3.1
       supertest: 6.2.4
       ts-node: 10.9.1_rtd32nqivyjsdsbfranzfxctdu
       ts-node-dev: 2.0.0_rtd32nqivyjsdsbfranzfxctdu
@@ -464,6 +464,7 @@ packages:
   /@prisma/engines/4.3.1:
     resolution: {integrity: sha512-4JF/uMaEDAPdcdZNOrnzE3BvrbGpjgV0FcPT3EVoi6I86fWkloqqxBt+KcK/+fIRR0Pxj66uGR9wVH8U1Y13JA==}
     requiresBuild: true
+    dev: false
 
   /@prisma/generator-helper/4.3.1:
     resolution: {integrity: sha512-tWIfbpXG30nvxYhyp0MZj4RX/3B4dnYWj5i4hanK7yTTXt6oRBm4b1veYbC/nW1KcBbJvbp+zvLN0dDSmSldqQ==}
@@ -2332,6 +2333,7 @@ packages:
     requiresBuild: true
     dependencies:
       '@prisma/engines': 4.3.1
+    dev: false
 
   /punycode/2.1.1:
     resolution: {integrity: sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==}
