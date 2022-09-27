@@ -23,21 +23,25 @@ const CreateUserInput = builder.inputType('CreateUserInput', {
 })
 
 builder.mutationField('createUser', (t) =>
-  t.prismaField({
-    type: 'User',
-    nullable: true,
-    errors: {},
-    args: {
-      user: t.arg({ type: CreateUserInput, required: true }),
-    },
-    resolve: async (query, _parent, args) =>
-      prisma.user.create({
-        ...query,
-        data: {
-          name: args.user.name,
-          email: args.user.email,
-          passwordHash: await hash(args.user.password, 10),
-        },
-      }),
-  })
+  t
+    .withAuth({
+      anonymous: true,
+    })
+    .prismaField({
+      type: 'User',
+      nullable: true,
+      errors: {},
+      args: {
+        user: t.arg({ type: CreateUserInput, required: true }),
+      },
+      resolve: async (query, _parent, args) =>
+        prisma.user.create({
+          ...query,
+          data: {
+            name: args.user.name,
+            email: args.user.email,
+            passwordHash: await hash(args.user.password, 10),
+          },
+        }),
+    })
 )

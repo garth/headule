@@ -7,17 +7,29 @@ import ScopeAuthPlugin from '@pothos/plugin-scope-auth'
 import ValidationPlugin from '@pothos/plugin-validation'
 import { prisma } from './database'
 import type PrismaTypes from '../generated/pothos-types'
-import { ApiError } from './apiError'
+import { ApiError, ErrorCode } from './apiError'
+
+type Context = {
+  userId: number | null
+}
 
 export const builder = new SchemaBuilder<{
-  Context: {
-    userId: number | null
+  AuthScopes: {
+    authenticated: boolean
+    anonymous: boolean
+  }
+  Context: Context
+  AuthContexts: {
+    authenticated: {
+      userId: number
+    }
+    anonymous: Context
   }
   PrismaTypes: PrismaTypes
   Scalars: {
     DateTime: {
       Output: Date
-      Input: Date
+      Input: String
     }
     Json: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -26,17 +38,23 @@ export const builder = new SchemaBuilder<{
     }
   }
   Objects: {
-    TokenResponse: {
+    Token: {
       token: string | null
       expires: Date
     }
   }
 }>({
-  plugins: [ErrorsPlugin, ScopeAuthPlugin, PrismaPlugin, PrismaUtilsPlugin, ValidationPlugin],
+  plugins: [ScopeAuthPlugin, ErrorsPlugin, PrismaPlugin, PrismaUtilsPlugin, ValidationPlugin],
+  authScopes: (ctx) => ({
+    authenticated: ctx.userId != null,
+    anonymous: ctx.userId == null,
+  }),
+  scopeAuthOptions: {
+    unauthorizedError: () => new ApiError(ErrorCode.UNAUTHORIZED, `Not authorized`),
+  },
   errorOptions: {
     defaultTypes: [ApiError],
   },
-  authScopes: () => ({}),
   prisma: {
     client: prisma,
     // defaults to false, uses /// comments from prisma schema as descriptions

@@ -16,54 +16,52 @@ const SignInInput = builder.inputType('SignInInput', {
   }),
 })
 
-builder.objectType('TokenResponse', {
-  fields: (t) => ({
-    token: t.exposeString('token', { nullable: true }),
-  }),
-})
-
 builder.mutationField('getToken', (t) =>
-  t.field({
-    type: 'TokenResponse',
-    nullable: true,
-    errors: {},
-    args: {
-      user: t.arg({ type: SignInInput, required: true }),
-    },
-    resolve: async (_root, args, ctx) => {
-      const user = await prisma.user.findUnique({
-        select: {
-          id: true,
-          passwordHash: true,
-        },
-        where: {
-          email: args.user.email,
-        },
-      })
+  t
+    .withAuth({
+      anonymous: true,
+    })
+    .field({
+      type: 'Token',
+      nullable: true,
+      errors: {},
+      args: {
+        user: t.arg({ type: SignInInput, required: true }),
+      },
+      resolve: async (_root, args, ctx) => {
+        const user = await prisma.user.findUnique({
+          select: {
+            id: true,
+            passwordHash: true,
+          },
+          where: {
+            email: args.user.email,
+          },
+        })
 
-      if (user != null && (await compare(args.user.password, user.passwordHash))) {
-        // add the user to the context for other resolvers
-        ctx.userId = user.id
+        if (user != null && (await compare(args.user.password, user.passwordHash))) {
+          // add the user to the context for other resolvers
+          ctx.userId = user.id
 
-        return {
-          token: await new Promise<string | null>((resolve, reject) => {
-            if (JWT_SECRET != null && user.id != null) {
-              sign({ userId: user.id }, JWT_SECRET, jwtOptions, (err, token) => {
-                if (err) {
-                  reject(err)
-                } else {
-                  resolve(token ?? null)
-                }
-              })
-            } else {
-              resolve(null)
-            }
-          }),
-          expires: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day
+          return {
+            token: await new Promise<string | null>((resolve, reject) => {
+              if (JWT_SECRET != null && user.id != null) {
+                sign({ userId: user.id }, JWT_SECRET, jwtOptions, (err, token) => {
+                  if (err) {
+                    reject(err)
+                  } else {
+                    resolve(token ?? null)
+                  }
+                })
+              } else {
+                resolve(null)
+              }
+            }),
+            expires: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day
+          }
+        } else {
+          throw new ApiError(ErrorCode.SIGN_IN_FAILED, 'Invalid email or password')
         }
-      } else {
-        throw new ApiError(ErrorCode.SIGN_IN_FAILED, 'Invalid email or password')
-      }
-    },
-  })
+      },
+    })
 )

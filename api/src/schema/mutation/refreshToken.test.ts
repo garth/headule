@@ -49,4 +49,59 @@ describe('refreshToken', () => {
     })
     expect(typeof data?.userId).toBe('number')
   })
+
+  it('should fail with an invalid token', async () => {
+    const response = await request(server)
+      .post('/graphql')
+      .set('Authorization', `Bearer invalid`)
+      .send({
+        query: `
+        mutation {
+          refreshToken {
+            __typename
+            ... on ApiError {
+              code
+              message
+            }
+            ... on MutationRefreshTokenSuccess {
+              data {
+                token
+              }
+            }
+          }
+        }
+        `,
+      })
+
+    expect(response.status).toBe(200)
+    expect(response.body.errors.length).toBe(1)
+  })
+
+  it('should fail with a missing token', async () => {
+    const response = await request(server)
+      .post('/graphql')
+      .send({
+        query: `
+        mutation {
+          refreshToken {
+            __typename
+            ... on ApiError {
+              code
+              message
+            }
+            ... on MutationRefreshTokenSuccess {
+              data {
+                token
+              }
+            }
+          }
+        }
+        `,
+      })
+
+    console.log(response.body)
+
+    expect(response.status).toBe(200)
+    expect(response.body.errors.length).toBe(1)
+  })
 })

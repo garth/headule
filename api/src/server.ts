@@ -2,6 +2,7 @@ import { createServer } from '@graphql-yoga/node'
 import { initContextCache } from '@pothos/core'
 import { schema } from './schema'
 import { verify } from 'jsonwebtoken'
+import { ApiError, ErrorCode } from './apiError'
 
 const JWT_SECRET = process.env.JWT_SECRET
 
@@ -14,16 +15,21 @@ export const server = createServer({
 
     let userId: number | null = null
     if (token != null && JWT_SECRET != null && token.startsWith('Bearer ')) {
-      const data = await new Promise<{ userId: number } | null>((resolve, reject) => {
-        verify(token.slice(7), JWT_SECRET, (err, decoded) => {
-          if (err) {
-            reject(err)
-          } else {
-            resolve(decoded as { userId: number })
-          }
+      try {
+        const data = await new Promise<{ userId: number } | null>((resolve, reject) => {
+          verify(token.slice(7), JWT_SECRET, (err, decoded) => {
+            if (err) {
+              reject(err)
+            } else {
+              resolve(decoded as { userId: number })
+            }
+          })
         })
-      })
-      userId = data?.userId ?? null
+        userId = data?.userId ?? null
+      } catch (err: any) {
+        console.error('Invalid security token', err.message)
+        throw new ApiError(ErrorCode.INVALID_TOKEN, 'Invalid security token')
+      }
     }
 
     return {

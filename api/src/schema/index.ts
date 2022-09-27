@@ -8,6 +8,7 @@ import './organisation'
 import './organisationUser'
 import './slot'
 import './space'
+import './token'
 import './unavailable'
 import './user'
 
