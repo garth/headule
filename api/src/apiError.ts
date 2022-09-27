@@ -11,4 +11,13 @@ export class ApiError extends Error {
     super(message)
     this.code = code
   }
+  toJSON() {
+    return {
+      code: this.code,
+      message: this.message,
+    }
+  }
+  get stack() {
+    return undefined
+  }
 }

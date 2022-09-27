@@ -22,6 +22,7 @@ describe('getToken', () => {
               ... on MutationGetTokenSuccess {
                 data {
                   token
+                  expires
                 }
               }
             }
@@ -42,6 +43,7 @@ describe('getToken', () => {
       })
     })
     expect(typeof data?.userId).toBe('number')
+    expect(typeof response.body.data.getToken.data.expires).toBe('string')
   })
 
   it('should fail for invalid emails', async () => {

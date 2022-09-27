@@ -9,20 +9,20 @@ type Booking {
   coupon: Coupon!
   couponDiscountPercentage: Int
   couponDiscountValue: Int
-  couponId: Int
+  couponId: ID
   couponSnapshot: Json
   customFields: Json
-  id: Int!
+  id: ID!
   user: User!
-  userId: Int!
+  userId: ID!
 }
 
 type BookingOption {
   booking: Booking!
-  bookingId: Int!
+  bookingId: ID!
   customFields: Json
   option: Option!
-  optionId: Int!
+  optionId: ID!
   optionSnapshot: Json!
   quantity: Int!
   unitPrice: Int!
@@ -30,13 +30,13 @@ type BookingOption {
 
 type BookingSlot {
   booking: Booking!
-  bookingId: Int!
+  bookingId: ID!
   customFields: Json
   length: Int!
   slot: Slot!
   slotBlockPrice: Int!
   slotBlockQuantity: Int!
-  slotId: Int!
+  slotId: ID!
   slotSnapshot: Json!
   startTime: DateTime!
 }
@@ -48,14 +48,14 @@ type Coupon {
   discountPercentage: Int
   discountValue: Int
   expiresAt: DateTime
-  id: Int!
+  id: ID!
   organisation: Organisation!
-  organisationId: Int!
+  organisationId: ID!
   quantity: Int
   slot: Slot
-  slotId: Int
+  slotId: ID
   space: Space
-  spaceId: Int
+  spaceId: ID
   validFrom: DateTime
   validTo: DateTime
 }
@@ -73,7 +73,9 @@ scalar DateTime
 
 enum ErrorCode {
   EMAIL_IN_USE
+  INVALID_TOKEN
   SIGN_IN_FAILED
+  UNAUTHORIZED
 }
 
 """
@@ -85,6 +87,7 @@ type Mutation {
   createUser(user: CreateUserInput!): MutationCreateUserResult
   getToken(user: SignInInput!): MutationGetTokenResult
   refreshToken: MutationRefreshTokenResult
+  updateUser(user: UpdateUserInput!): MutationUpdateUserResult
 }
 
 union MutationCreateUserResult = ApiError | MutationCreateUserSuccess
@@ -96,34 +99,40 @@ type MutationCreateUserSuccess {
 union MutationGetTokenResult = ApiError | MutationGetTokenSuccess
 
 type MutationGetTokenSuccess {
-  data: TokenResponse!
+  data: Token!
 }
 
 union MutationRefreshTokenResult = ApiError | MutationRefreshTokenSuccess
 
 type MutationRefreshTokenSuccess {
-  data: TokenResponse!
+  data: Token!
+}
+
+union MutationUpdateUserResult = ApiError | MutationUpdateUserSuccess
+
+type MutationUpdateUserSuccess {
+  data: User!
 }
 
 type Option {
   bookingOptions: [BookingOption!]!
   customFields: Json
-  id: Int!
+  id: ID!
   maxUnits: Int!
   name: String!
   organisation: Organisation!
-  organisationId: Int!
+  organisationId: ID!
   slot: Slot
-  slotId: Int
+  slotId: ID
   space: Space
-  spaceId: Int
+  spaceId: ID
   unitPrice: Int!
 }
 
 type Organisation {
   coupons: [Coupon!]!
   customFields: Json
-  id: Int!
+  id: ID!
   name: String!
   options: [Option!]!
   organisationUsers: [OrganisationUser!]!
@@ -132,16 +141,16 @@ type Organisation {
 }
 
 type OrganisationUser {
-  id: Int!
+  id: ID!
   organisation: Organisation!
-  organisationId: Int!
+  organisationId: ID!
   role: String!
   user: User!
-  userId: Int!
+  userId: ID!
 }
 
 type Query {
-  user(userId: Int): User
+  user(userId: ID): User
 }
 
 input SignInInput {
@@ -157,46 +166,53 @@ type Slot {
   customFields: Json
   daysOfMonth: [Int!]!
   daysOfWeek: [Int!]!
-  id: Int!
+  id: ID!
   length: Int!
   name: String!
   options: [Option!]!
   space: Space!
-  spaceId: Int!
+  spaceId: ID!
   startTime: Int!
 }
 
 type Space {
   coupons: [Coupon!]!
   customFields: Json
-  id: Int!
+  id: ID!
   name: String!
   options: [Option!]!
   organisation: Organisation!
-  organisationId: Int!
+  organisationId: ID!
   slots: [Slot!]!
   unavailables: [Unavailable!]!
 }
 
-type TokenResponse {
+type Token {
+  expires: DateTime!
   token: String
 }
 
 type Unavailable {
   endTime: DateTime!
-  id: Int!
+  id: ID!
   organisation: Organisation!
-  organisationId: Int!
+  organisationId: ID!
   reason: String!
   space: Space
-  spaceId: Int
+  spaceId: ID
   startTime: DateTime!
+}
+
+input UpdateUserInput {
+  customFields: Json
+  name: String
+  password: String
 }
 
 type User {
   bookings: [Booking!]!
   customFields: Json
   email: String!
-  id: Int!
+  id: ID!
   name: String!
 }

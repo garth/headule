@@ -28,6 +28,7 @@ describe('refreshToken', () => {
             ... on MutationRefreshTokenSuccess {
               data {
                 token
+                expires
               }
             }
           }
@@ -48,6 +49,7 @@ describe('refreshToken', () => {
       })
     })
     expect(typeof data?.userId).toBe('number')
+    expect(typeof response.body.data.refreshToken.data.expires).toBe('string')
   })
 
   it('should fail with an invalid token', async () => {
@@ -98,8 +100,6 @@ describe('refreshToken', () => {
         }
         `,
       })
-
-    console.log(response.body)
 
     expect(response.status).toBe(200)
     expect(response.body.errors.length).toBe(1)

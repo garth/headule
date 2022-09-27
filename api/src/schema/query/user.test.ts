@@ -41,9 +41,9 @@ describe('user', () => {
         query: `
           {
             user {
-              id
               email
               name
+              customFields
             }
           }
         `,
@@ -51,9 +51,11 @@ describe('user', () => {
 
     expect(response.status).toBe(200)
     expect(response.body.data.user).toEqual({
-      id: '1',
       email: 'garth@test.com',
       name: 'Garth',
+      customFields: {
+        test: 'field',
+      },
     })
   })
 })
