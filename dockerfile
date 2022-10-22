@@ -1,8 +1,8 @@
-FROM node:16.17
+FROM node:18.11
 
 WORKDIR /usr/src/app
 
-RUN npm install -g pnpm@7.12
+RUN npm install -g pnpm@7.14
 RUN pnpm config set store-dir /usr/.pnpm-store
 
 COPY pnpm-lock.yaml /usr/src/app/pnpm-lock.yaml

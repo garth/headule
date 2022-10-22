@@ -48,7 +48,7 @@ builder.mutationField('updateUser', (t) =>
           }
         }
 
-        return await prisma.user.update({
+        return prisma.user.update({
           ...query,
           data: {
             name: args.user.name ?? undefined,

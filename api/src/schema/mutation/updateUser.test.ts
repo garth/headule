@@ -1,4 +1,4 @@
-import { expect, describe, it, beforeAll, afterEach } from 'vitest'
+import { expect, describe, it, beforeEach, afterEach } from 'vitest'
 import { server } from '../../server'
 import request from 'supertest'
 import { getToken } from '../query/user.test'
@@ -7,7 +7,7 @@ import { seedUsers } from '../../../prisma/seedUsers'
 
 describe('updateUser', () => {
   let token: string | null = null
-  beforeAll(async () => {
+  beforeEach(async () => {
     token = await getToken('garth@test.com', 'password')
   })
 
@@ -45,14 +45,14 @@ describe('updateUser', () => {
     expect(response.body.data.updateUser.data.name).toBe('Brad')
   })
 
-  it.todo('should add custom fields', async () => {
+  it('should add custom fields', async () => {
     const response = await request(server)
       .post('/graphql')
       .set('Authorization', `Bearer ${token}`)
       .send({
         query: `
-        mutation ($json: Json!) {
-          updateUser(user: {customFields: $json}) {
+        mutation ($user: UpdateUserInput!) {
+          updateUser(user: $user) {
             __typename
             ... on ApiError {
               code
@@ -67,15 +67,13 @@ describe('updateUser', () => {
         }
         `,
         variables: {
-          json: JSON.stringify({ new: 'field' }),
+          user: { customFields: { new: 'field' } },
         },
       })
 
-    console.log(response.body.errors[0])
-
     expect(response.status).toBe(200)
     expect(response.body.data.updateUser.__typename).toBe('MutationUpdateUserSuccess')
-    expect(response.body.data.updateUser.data).toBe({
+    expect(response.body.data.updateUser.data).toStrictEqual({
       customFields: {
         test: 'field',
         new: 'field',

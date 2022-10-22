@@ -26,6 +26,7 @@ export const server = createServer({
           })
         })
         userId = data?.userId ?? null
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         console.error('Invalid security token', err.message)
         throw new ApiError(ErrorCode.INVALID_TOKEN, 'Invalid security token')
