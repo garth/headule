@@ -12,7 +12,6 @@ describe('updateUser', () => {
   })
 
   afterEach(async () => {
-    // await prisma.$queryRaw`DELETE FROM user`
     await prisma.user.deleteMany()
     await seedUsers(prisma)
   })
